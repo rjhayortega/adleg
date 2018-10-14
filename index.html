@@ -182,7 +182,7 @@ of your campaign.</p>
         <div class="row">
             <!-- begin: leftside -->
             <div class="col-md-8">
-            <form id="keyproform" action="" method="POST">
+
               <div class="col-centered">
                 <div class="row">
                   <div class="form-group col-md-8">
@@ -197,13 +197,13 @@ of your campaign.</p>
                   </div>
                   
                   <div class="form-group col-md-3">
-                      <button type="submit" name="action" class="btn btn-primary">Get Competitor Names
+                      <button id="keyproform" name="action" class="btn btn-primary">Get Competitor Names
                         <span></span>
                       </button>
                   </div>
                 </div>
               </div>
-            </form>
+     
 
             <div class="row">
                 <div id="search_action" style="display: none;" class="row center">
@@ -399,137 +399,72 @@ function charArray(charA, charZ) {
 }
 			
 
-
-      (function() {
                 
 
 
-                var suggest_url = "https://suggestqueries.google.com/complete/search?client=chrome&format=json&hl=" + lang;
-                
-                // original search
-                suggest_url += "&q=" + encodeURIComponent(search_text);
-                $.ajax({
-                   type: 'GET',
-                    url: suggest_url,
-                    async: false,
-                    contentType: "application/json",
-                    dataType: 'jsonp',
-                    success: done,
-                    error: function(e) {
-                       console.log('First XHR: ' + e.message);
-                    }
-                });
-                
+           var results = '<ul class="tree">';
+           var count = 0;
 
 
                 function done(json) {
-                    var google_suggestions = json;
-                    var results = '';
+          
+                    var data= json;
+                    
                     window.mainctr = 0;
                   
                     // clear existing results
                     $('.final-result').show();
                     $('#table-results').empty();
-                  
-                    if (google_suggestions.length !== 0) {
-                      
-                      results += '<ul class="tree">';
+                 
 
 
-                      $.each(google_suggestions[1], function(m, k) {
-                          
-                          window.mainctr++; // counter dont remove
-
-                          var rm1 = k.replace(search_text + ' ', '');
-                          var rm2 = rm1.replace((search_text + 's '), '');
-
+                      var arr = data.split('%');
+                      for(var i=0; i<arr.length; i++){
+                        //results += arr[i]+"</br>";
+                         var rm2 = arr[i];
+                         count += 1;
                           var s_word = rm2.split(' ');
                           results +=  '<li><input type="checkbox" class="add-right" onchange="addtoright(this)" value="' + rm2 + '" /><span>' + rm2 + '</span></li>';
-                        
-
-                         if (s_word.length == 1) {
+                          if (s_word.length == 1) {
                             if (!jQuery.inArray(rm2, keywordpro)) { keywordpro.push(rm2); }
                           }
-
-
                           if (s_word.length > 1)
                           {
                             results += '<ul>';
                             $.each(s_word, function(m, word) {
-
                               //window.mainctr++; // increment again
-                              if (!jQuery.inArray(word, keywordpro)) { keywordpro.push(word); }
+                          count += 1;
                               results +=  '<li><input type="checkbox" class="add-right" onchange="addtoright(this)" value="' + word + '" /><span>' + word + '</span></li>';
                             });
                             results += '</ul>';
                           }
-                      });
 
-                      results += "</ul>\n";
-                      
-                      // added by joven (09/07/2018)
-                      suggestionlimitlabel(results);  
-                    }
-                    
 
-                    // search by letters a )
-                    var az_url = '';
-                    $.each(charArray('a', 'z'), function(m, letter) {
-                        az_url = suggest_url + "&q="+ encodeURIComponent(search_text + ' ' + letter);
-                        $.ajax({
-                           type: 'GET',
-                            url: az_url,
-                            async: false,
-                            contentType: "application/json",
-                            dataType: 'jsonp',
 
-                            success: function(json) {
+                      }
 
-                                  var results = '';
-                                  var google_suggestions = json;
-                                  if (google_suggestions.length !== 0) {
-                                        $.each(google_suggestions[1], function(m, k) {
-                                            window.mainctr++; // increment again
-                                            var rm1 = k.replace(search_text + ' ', '');
-                                            var rm2 = rm1.replace(search_text + 's ', '');
 
-                                            var s_word = rm2.split(' ');
-                                            if (s_word.length == 1) {
-                                              if (!jQuery.inArray(rm2, keywordpro)) { keywordpro.push(rm2); }
-                                            }
-                                            if (s_word.length > 1)
-                                            {
-                                              $.each(s_word, function(m, word) {
-                                                if (!jQuery.inArray(word, keywordpro)) { keywordpro.push(word); }
-                                              });
-                                            }
-                                        });                                    
-                                  } // end: google_suggestions
-                              
-                                  // added by joven (09/07/2018)
-                                  suggestionlimitlabel(results);
-                            },
-                            error: function(e) {
-                               console.log('Second XHR: ' + e.message);
-                            }
-                        });
-                    });
+
+
+
+                        $('#total_suggestions').text(count);
+                      $('#table-results').append(results);
+
                   
-                  
-                    // attached the js events
-                    var imported = document.createElement('script');
-                    imported.src = 'resources/js/custom.js?t='+ Date.now();
-                    document.head.appendChild(imported);
-                  
-                } // end: done()
+
+                }
   
-})();
+
+
+
+
+                
 
 
 
 function suggestionlimitlabel(results) {
     // Show now 20 results
-    $('#table-results').append(results);
+
 
     // show total results in numbers
     //var total_suggestions = $('ul.tree>li').length;
@@ -537,21 +472,45 @@ function suggestionlimitlabel(results) {
     //var total_suggestions = $('.add-right').length;
     //$('#total_suggestions').text(total_suggestions);
     var total_suggestions = window.mainctr;
-    $('#total_suggestions').text(total_suggestions);
+
   
     // added by joven (09/01/2018) show limit message
     $('#limitmsg').show();
     $('#limitcount').text(total_suggestions);
 }
+
+
+
 			</script>
 	  <!-- 		<script type="text/javascript" src="resources/js/custom.js"></script> -->
 		<script>
 			(function() {
-					$('#keyproform').submit(function() {
+					$('#keyproform').click(function() {
 						if ($('#query').val().length === 0) {
 							alert('Keyword Search is required');
 							return false;
 						}
+
+            else{
+
+              for(var i=1; i<9; i++){
+                var suggest_url = "444.php?x="+i;
+                
+          
+                $.ajax({
+                   type: 'GET',
+                    url: suggest_url,
+                    async: false,
+                 
+                    success: done,
+                    error: function(e) {
+                       console.log('First XHR: ' + e.message);
+                    }
+                });
+
+
+              }
+            }
 					});
 			})();
 		</script>

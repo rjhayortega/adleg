@@ -12,15 +12,16 @@ $start = false;
 $built = ""; 
 $count = 0; 
 
+$total = 0;
 
+//for($x=1; $x<10; $x++){ 
 
-for($x=3; $x<6; $x++){ 
 
 $thestring = "plumbers%20fargo%20nd";
 
+//echo "mono test.exe ".$thestring." ".$_GET["x"]."</br>";
 
-
-$aa = shell_exec("mono test.exe ".$thestring." ".$x);
+$aa = shell_exec("mono test.exe ".$thestring." ".$_GET["x"]);
 
 
 for($i=0; $i<strlen($aa); $i++){ 
@@ -49,7 +50,8 @@ if($aa{$i}=="\\" && $aa{$i+1}=="n" && $aa{$i+2}=="," &&  $aa{$i+(strlen($txt)-1)
 			else{
 				if(strlen($built)>2){
 				$built = str_replace(",","",$built);
-				echo $built."</br></br>";
+				$total += 1;
+				echo $built."%";
 				}
 			
 			
@@ -71,8 +73,6 @@ catch(Exception $e) {
 	}
 }
 	
-	
-	
-	}
+
 
 ?>
