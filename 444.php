@@ -17,7 +17,7 @@ $total = 0;
 //for($x=1; $x<10; $x++){ 
 
 
-$thestring = str_replace(" ","%20" $_GET["q"]);
+$thestring = str_replace(" ","%20", $_GET["q"]);
 
 //echo "mono test.exe ".$thestring." ".$_GET["x"]."</br>";
 

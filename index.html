@@ -494,8 +494,9 @@ function suggestionlimitlabel(results) {
             else{
 
               for(var i=1; i<9; i++){
+
                 var suggest_url = "444.php?q="+$('#query').val()+"&x="+i;
-                
+                 console.log(suggest_url);
           
                 $.ajax({
                    type: 'GET',
