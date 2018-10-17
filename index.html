@@ -400,8 +400,8 @@ function charArray(charA, charZ) {
 			
 
                 
-
-
+			var cont = true;
+			var addresses = [];
            var results = '<ul class="tree">';
            var count = 0;
 
@@ -418,7 +418,21 @@ function charArray(charA, charZ) {
                  
 
 
-                      var arr = data.split('%');
+                      var tmp = data.split('*');
+					  var arr = tmp[0].split('%');
+					  
+					  
+					  if(cont){
+					  var tmp1 = tmp[1].split('%');
+					  
+					  
+					  for(var i=0; i<tmp1.length; i++){
+					  addresses.push(tmp1[i]);
+					  }
+					  
+					  }
+			
+					  
                       for(var i=0; i<arr.length; i++){
                         //results += arr[i]+"</br>";
                          var rm2 = arr[i];
@@ -445,18 +459,44 @@ function charArray(charA, charZ) {
 
 
 
-
-
-                        $('#total_suggestions').text(count);
+					
+				
+                      $('#total_suggestions').text(count);
                       $('#table-results').append(results);
-
+				
+					if(cont){
+					cont = false;
+					//step2();
+					
+					}
                   
 
                 }
   
 
 
+function step2(){
 
+for(var i=0; i<addresses.length; i++){
+
+ var suggest_url = "2.php?query="+addresses[i];
+                 console.log(suggest_url);
+          
+                $.ajax({
+                   type: 'GET',
+                    url: suggest_url,
+                    async: false,
+                 
+                    success: done,
+                    error: function(e) {
+                       console.log('First XHR: ' + e.message);
+                    }
+                });
+				
+				
+				}
+
+}
 
                 
 
@@ -495,11 +535,10 @@ function suggestionlimitlabel(results) {
                 $('#table-results').html("");
                 results = "";
                 count = 0;
-              for(var i=1; i<9; i++){
-
-                var suggest_url = "444.php?q="+$('#query').val()+"&x="+i;
+				
+                var suggest_url = "1.php?query="+$('#query').val();
                  console.log(suggest_url);
-          
+				cont = true;
                 $.ajax({
                    type: 'GET',
                     url: suggest_url,
@@ -512,7 +551,6 @@ function suggestionlimitlabel(results) {
                 });
 
 
-              }
             }
 					});
 			})();
