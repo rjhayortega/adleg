@@ -376,9 +376,8 @@ of your campaign.</p>
 
 
     <!-- end footer -->
-	
-					<script>
-			function addtoright(t) {
+<script>
+	function addtoright(t) {
       var c = $(t).val();
       if(t.checked) {
           addright(c);
@@ -400,39 +399,57 @@ function charArray(charA, charZ) {
 			
 
                 
-			var cont = true;
-			var addresses = [];
+		  var cont = true;
+		  var addresses = [];
            var results = '<ul class="tree">';
            var count = 0;
-
-
+			var rounds = 0;
+			var myID = "";
+		   
+		   
+		       function check(json) {
+					
+   
+               var n = json.indexOf("ongoing");
+			      
+				if(n<=0){
+				
+				myID = json.trim();
+				alert(myID);
+				
+				}
+				
+				else{
+				alert("Previous Search process ongoing");
+				}
+				
+				}
+		   
+		   
+		   
+		   
+		   
                 function done(json) {
-          
-                    var data= json;
-                    
-                    window.mainctr = 0;
+					
+                var data= json;
+				console.log(data);
+                window.mainctr = 0;
                   
                     // clear existing results
-                    $('.final-result').show();
-                    $('#table-results').empty();
-                 
+               $('.final-result').show();
+			   
+			   if(rounds==0){
+               $('#table-results').empty();
+			   }
+			   
+			   rounds += 1;
+			   
+               var n = data.indexOf("0 results");
+			      
+				if(n<=0){
 
+					  var arr = data.split('%');
 
-                      var tmp = data.split('*');
-					  var arr = tmp[0].split('%');
-					  
-					  
-					  if(cont){
-					  var tmp1 = tmp[1].split('%');
-					  
-					  
-					  for(var i=0; i<tmp1.length; i++){
-					  addresses.push(tmp1[i]);
-					  }
-					  
-					  }
-			
-					  
                       for(var i=0; i<arr.length; i++){
                         //results += arr[i]+"</br>";
                          var rm2 = arr[i];
@@ -457,48 +474,20 @@ function charArray(charA, charZ) {
 
                       }
 
-
-
-					
 				
                       $('#total_suggestions').text(count);
                       $('#table-results').append(results);
 				
-					if(cont){
-					cont = false;
-					//step2();
-					
-					}
+				if(rounds>=6){
+				//clearInterval(myVar);
+				}
+				
+				
+				}
                   
 
                 }
   
-
-
-function step2(){
-
-for(var i=0; i<addresses.length; i++){
-
- var suggest_url = "2.php?query="+addresses[i];
-                 console.log(suggest_url);
-          
-                $.ajax({
-                   type: 'GET',
-                    url: suggest_url,
-                    async: false,
-                 
-                    success: done,
-                    error: function(e) {
-                       console.log('First XHR: ' + e.message);
-                    }
-                });
-				
-				
-				}
-
-}
-
-                
 
 
 
@@ -520,28 +509,12 @@ function suggestionlimitlabel(results) {
 }
 
 
-
-			</script>
-	  <!-- 		<script type="text/javascript" src="resources/js/custom.js"></script> -->
-		<script>
-			(function() {
-					$('#keyproform').click(function() {
-						if ($('#query').val().length === 0) {
-							alert('Keyword Search is required');
-							return false;
-						}
-
-            else{
-                $('#table-results').html("");
-                results = "";
-                count = 0;
-				
-                var suggest_url = "1.php?query="+$('#query').val();
-                 console.log(suggest_url);
-				cont = true;
-                $.ajax({
+var myVar;
+function myTimer() {
+	console.log(myID);
+    $.ajax({
                    type: 'GET',
-                    url: suggest_url,
+                    url: 'test.php?f='+myID,
                     async: false,
                  
                     success: done,
@@ -549,7 +522,45 @@ function suggestionlimitlabel(results) {
                        console.log('First XHR: ' + e.message);
                     }
                 });
+}
 
+			</script>
+			
+			
+			
+	  <!-- 		<script type="text/javascript" src="resources/js/custom.js"></script> -->
+		<script>
+			(function() {
+			
+					$('#keyproform').click(function() {
+						if ($('#query').val().length === 0) {
+							alert('Keyword Search is required');
+							return false;
+						}
+
+            else{
+				alert(myID);
+				
+                $('#table-results').html("");
+                
+				results = "";
+                count = 0;
+				rounds = 0;
+                var suggest_url = "add.php?kw="+$('#query').val()+"&f="+myID;
+                // console.log(suggest_url);
+				cont = true;
+                $.ajax({
+                   type: 'GET',
+                    url: suggest_url,
+                    async: false,
+                 
+                  success: check,
+                    error: function(e) {
+                       console.log('First XHR: ' + e.message);
+                    }
+                });
+				
+				myVar = setInterval(myTimer, 1000);
 
             }
 					});
